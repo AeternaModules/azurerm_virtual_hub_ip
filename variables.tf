@@ -17,7 +17,7 @@ EOT
     subnet_id                    = string
     virtual_hub_id               = string
     private_ip_address           = optional(string)
-    private_ip_allocation_method = optional(string, "Dynamic")
+    private_ip_allocation_method = optional(string) # Default: "Dynamic"
   }))
 }
 
