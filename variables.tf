@@ -19,28 +19,14 @@ EOT
     private_ip_address           = optional(string)
     private_ip_allocation_method = optional(string)
   }))
-  # --- Unconfirmed validation candidates, derived from azurerm_virtual_hub_ip's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: virtual_hub_id
-  #   source:    [from virtualwans.ValidateVirtualHubID] !ok
-  # path: virtual_hub_id
-  #   source:    [from virtualwans.ValidateVirtualHubID] err != nil
-  # path: public_ip_address_id
-  #   source:    [from commonids.ValidatePublicIPAddressID] !ok
-  # path: public_ip_address_id
-  #   source:    [from commonids.ValidatePublicIPAddressID] err != nil
-  # path: subnet_id
-  #   source:    [from commonids.ValidateSubnetID] !ok
-  # path: subnet_id
-  #   source:    [from commonids.ValidateSubnetID] err != nil
-  # path: private_ip_address
-  #   source:    validation.IsIPv4Address(...) - no translation rule yet, add one
-  # path: private_ip_allocation_method
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  validation {
+    condition = alltrue([
+      for k, v in var.virtual_hub_ips : (
+        length(v.name) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  # Note: 8 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
