@@ -17,20 +17,15 @@ EOT
     subnet_id                    = string
     virtual_hub_id               = string
     private_ip_address           = optional(string)
-    private_ip_allocation_method = optional(string) # Default: "Dynamic"
+    private_ip_allocation_method = optional(string)
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.virtual_hub_ips : (
-        length(v.name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_virtual_hub_ip's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
   # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: virtual_hub_id
   #   source:    [from virtualwans.ValidateVirtualHubID] !ok
   # path: virtual_hub_id
